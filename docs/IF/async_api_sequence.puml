@@ -1,0 +1,23 @@
+@startuml
+actor User
+participant "APIサーバ (FastAPI)" as API
+participant "ジョブキュー/ワーカー" as Worker
+participant "ストレージ (S3等)" as Storage
+
+== 動画アップロード・ジョブ登録 ==
+User -> API: POST /api/v1/analyze (動画+メタデータ)
+API -> Storage: 動画保存
+API -> Worker: ジョブ登録 (job_id, metadata, 動画パス)
+API --> User: 202 Accepted (job_id, status=queued)
+
+== 解析処理 ==
+Worker -> Storage: 動画取得
+Worker -> Worker: 解析処理（AI推論等）
+Worker -> Storage: 結果JSON保存
+Worker -> API: ジョブ完了通知 (job_id, status=completed)
+
+== 結果取得 ==
+User -> API: GET /api/v1/results/{job_id}
+API -> Storage: 結果JSON取得
+API --> User: 200 OK (解析結果JSON)
+@enduml
