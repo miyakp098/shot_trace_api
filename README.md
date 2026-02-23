@@ -49,3 +49,19 @@
 - S3 連携と結果保存
 - 認証（APIキー / JWT）、レート制限、ファイルサイズ制限の実装
 - JSON Schema の確定と OpenAPI への組み込み
+
+
+## Dockerで起動する
+
+開発コンテナで起動する手順:
+
+```bash
+# イメージをビルド（server サービス）
+docker compose build server
+
+# バックグラウンドで起動
+docker compose up -d
+
+# ブラウザで Swagger UI を開く
+# http://127.0.0.1:8000
+```
