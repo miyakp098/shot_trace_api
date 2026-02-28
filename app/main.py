@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
 
-from app.endpoint.items import router as items_router
+from app.endpoint.media import router as media_router
 
 
 app = FastAPI(
@@ -16,4 +16,4 @@ def root():
     return RedirectResponse(url="/docs")
 
 
-app.include_router(items_router)
+app.include_router(media_router)
