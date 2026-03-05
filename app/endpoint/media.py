@@ -1,5 +1,6 @@
 import os
 import uuid
+from datetime import datetime
 from pathlib import Path
 
 from fastapi import APIRouter, File, HTTPException, UploadFile
@@ -36,3 +37,22 @@ async def ingest_upload(file: UploadFile = File(...)):
         "bytes": written,
         "content_type": file.content_type,
     }
+
+
+@router.get("/ingest/files", status_code=200)
+async def list_uploaded_files():
+    files = []
+    for path in sorted(STORAGE_PATH.glob("*")):
+        if not path.is_file():
+            continue
+        stat = path.stat()
+        files.append(
+            {
+                "name": path.name,
+                "size": stat.st_size,
+                "modified": datetime.fromtimestamp(stat.st_mtime).isoformat(),
+                "path": str(path),
+            }
+        )
+
+    return {"count": len(files), "files": files}
